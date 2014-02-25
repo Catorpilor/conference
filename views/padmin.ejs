@@ -1,0 +1,232 @@
+<div class="jumbotron">
+    <h3>授权信息</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>最大用户数</th>
+                <th>最大会议数</th>
+                <th>当前用户数</th>
+                <th>动作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="badge badge-important"><%= maxmem %></span></td>
+                <td><span class="badge badge-info"><%= maxconfs %></span></td>
+                <td><span class="badge badge-info"><%= curnum %></span></td>
+                <td><a role="button" class="btn btn-danger" id="del_lic">卸载授权</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <% if( maxmem > curnum ) { %>
+        <p>
+            <a href="#contactmodal" role="button" class="btn btn-info" data-toggle="modal">添加用户</a>
+            <a href="/importcontacts" role="button" class="btn btn-primary cimport hide">导入用户</a>
+        </p>
+    <% } %>
+</div>
+<p class="cur_nums hide"><%= curnum %></p>
+<div id="contactmodal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="myModalLabel">用户信息 <small style="color: red">红色*为必填项(移动电话,座机二选一)</small></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row container top-buffer">
+                    <div class="col-md-5">
+                        <div class="input-group ">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input type="text" class="form-control" id="contact_name" name="c_name" placeholder="姓名">
+                        </div>
+                        <!--<span class="help-inline text-danger">*</span>-->
+                    </div>
+                    <p class="help-block" style="color: red">*</p>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
+                            <input type="text" class="form-control" id="contact_mobile" name="c_mobile" placeholder="移动电话">
+                        </div>
+                        <!--<span class="help-inline text-danger">*</span>-->
+                    </div>
+                    <p class="help-block" style="color: red">*</p>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                            <input type="text" class="form-control" id="contact_office" name="c_office" placeholder="座机">
+                        </div>
+                        <!--<span class="help-inline text-danger">*</span>-->
+                    </div>
+                    <p class="help-block" style="color: red">*</p>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-pushpin"></i></span>
+                            <input type="text" class="form-control" id="contact_locate" name="c_locate" placeholder="地区(北京、上海等)">
+                        </div>
+                        <!--<span class="help-inline text-danger">*</span>-->
+                    </div>
+                    <p class="help-block" style="color: red">*</p>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                            <input type="text" class="form-control" id="contact_email" name="c_email" placeholder="邮箱">
+                        </div>
+                        <!--<span class="help-inline text-danger">*</span>-->
+                    </div>
+                    <p class="help-block" style="color: red">*</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-warning">取消</button>
+                <button class="btn btn-primary ctconfirm">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<% if (curnum) { %> 
+<table class="table table-bordered" id="userlist">
+    <thead>
+        <tr>
+            <th>姓名</th>
+            <th>手机</th>
+            <th>办公电话</th>
+            <th>电子邮件</th>
+            <th>动作</th>
+        </tr>
+    </thead>
+    <tbody id="list-content">
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+                <div class="pagination" id="pagination" style="margin:4px 0 0 0"></div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<% } %>
+<script src="/javascripts/jquery.pagination.js"></script>
+<script>
+    $(document).ready(function(){
+        if(screen.width >=1024 && screen.height >=768 ){
+            $('.cimport').removeClass('hide');
+        }
+        $('#iupfile').change(function(){
+            var filePath = this.value;
+            if(filePath)
+            {
+                var ext = filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
+                if(ext != 'xml'){
+                    $('.fileupload').fileupload('clear');
+                    alert('请选择XML格式的文件');
+                }
+            }
+        });
+
+        $('#del_lic').click(function(e){
+            e.preventDefault();
+            var data={};
+            data.status = 'delete';
+            if(confirm("确定卸载?")){
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'applicatin/json',
+                    url: '/dellic/',
+                    success: function(data){
+                        window.location.href="/";
+                    }
+                });
+            }else{
+                console.log('cancled');
+            }
+        });
+
+        var $modal = $('#contactmodal');
+        $modal.on('click','.ctconfirm',function(){
+            var cname = $('#contact_name').val();
+            var cmobile = $('#contact_mobile').val();
+            var coffice = $('#contact_office').val();
+            var cemail = $('#contact_email').val();
+            var clocate = $('#contact_locate').val();
+            console.log(cname,cmobile,coffice,cemail);
+            $modal.modal('hide');
+            var data={};
+            data.name = cname;
+            data.mobile = cmobile;
+            data.office = coffice;
+            data.email = cemail;
+            data.locate = clocate;
+            $.ajax({
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                url : '/addcontact/',
+                success : function(data){
+                    console.log(data);
+                    window.location.href="/";
+                }
+            });
+        });
+        if( $('.cur_nums').html() != 0 ){
+            var data={};
+            data.status = 'get all';
+            $.ajax({
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                url: '/getusers/',
+                success : function(data){
+                    console.log(data);
+                    var pages = Math.ceil(data.length/10);
+                    //first load page 0
+                    $('#list-content').html('');
+                    for(var i=0;i<10;++i){
+                        if( i < data.length && data[i].username != 'admin')
+                            $('#list-content').append('<tr><td>'+data[i].username+'</td><td>'+data[i].Contact_info.mobile+'</td><td>'
+                                +data[i].Contact_info.office+'</td><td>'+data[i].email+'</td><td><a role="button" class="btn btn-danger cdel" val="'+data[i].username+'">删除</a></td></tr>');    
+                    }
+                    $('#pagination').pagination(data.length, {
+                        current_page: 0,
+                        items_per_page: 10,
+                        num_display_entries: pages,
+                        callback: function(page_id){
+                            $('#list-content').html('');
+                            for(var i=0;i<10;++i){
+                                if( page_id*10+i < data.length && data[page_id*10+i].username != 'admin')
+                                    $('#list-content').append('<tr><td>'+data[page_id*10+i].username+'</td><td>'+data[page_id*10+i].Contact_info.mobile+'</td><td>'
+                                        +data[page_id*10+i].Contact_info.office+'</td><td>'+data[page_id*10+i].email+'</td><td><a role="button" class="btn btn-danger cdel" val="'+data[page_id*10+i].username+'">删除</a></td></tr>');    
+                            }
+                        },
+                        load_first_page: true,
+                        prev_text: '上一页',
+                        next_text: '下一页'
+                    });
+                }
+            });
+        }
+        $('#list-content').delegate('a.cdel','click',function(){
+            if(confirm('确定删除?')){
+                var data={};
+                data.username = $(this).attr('val');
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: '/deluser/',
+                    success: function(data){
+                        window.location.href="/";
+                    }
+                });
+            }
+        });
+    });
+</script>

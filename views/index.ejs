@@ -1,0 +1,27 @@
+<% if (!locals.user) { %>
+    <div class="jumbotron">
+        <h3>欢迎使用朗泰会议系统</h3>
+    </div>
+<% } else { %>
+    <p class="hide cnum"><%= contacts %></p>
+    <p class="hide uname"><%= locals.user.username %></p>
+    <p class="iflag"></p>
+    <% if(confs.length == 0 ) { %>
+        <div class="jumbotron">
+            <h3>您还没有预约任何会议.</h3>
+            <p><a class="btn btn-lg btn-primary" href="/rmeeting/<%= new Date().getTime() %>">预约会议</a></p>
+        </div>
+    <% }else{ %>
+       <% include rmlist %>
+    <% } %>
+    <hr>
+    <script>
+        $(document).ready(function(){
+            var sname = $('.uname').html();
+            if($('.cnum').html() == 0 ){
+                $('.iflag').append('<div class="alert alert-warning fade in">' +
+                    '您还没有添加联系人! <a href="/u/'+sname+'">添加联系人</a> <button type="button" class="close" data-dismiss="alert">&times;</button>' +'</div>');
+            }
+        });
+    </script>
+<% } %>

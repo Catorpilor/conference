@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <title><%= title %> -朗泰会议系统</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+      <script type="text/javascript">
+          (function(document,navigator,standalone) {
+              // prevents links from apps from oppening in mobile safari
+              // this javascript must be the first script in your <head>
+              if ((standalone in navigator) && navigator[standalone]) {
+                  var curnode, location=document.location, stop=/^(a|html)$/i;
+                  document.addEventListener('click', function(e) {
+                      curnode=e.target;
+                      while (!(stop).test(curnode.nodeName)) {
+                          curnode=curnode.parentNode;
+                      }
+                      // Condidions to do this only on links to your own app
+                      // if you want all links, use if('href' in curnode) instead.
+                      if(
+                              'href' in curnode && // is a link
+                                      (chref=curnode.href).replace(location.href,'').indexOf('#') && // is not an anchor
+                                      (	!(/^[a-z\+\.\-]+:/i).test(chref) ||                       // either does not have a proper scheme (relative links)
+                                              chref.indexOf(location.protocol+'//'+location.host)===0 ) // or is in the same protocol and domain
+                              ) {
+                          e.preventDefault();
+                          location.href = curnode.href;
+                      }
+                  },false);
+              }
+          })(document,window.navigator,'standalone');
+      </script>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+      <link href="/images/apple-touch-icon-152x152.png"
+            sizes="152x152"
+            rel="apple-touch-icon">
+      <!-- iPad, iOS 6, retina -->
+      <link href="/images/apple-touch-icon-144x144.png"
+            sizes="144x144"
+            rel="apple-touch-icon">
+      <!-- iPhone, iOS 7, retina -->
+      <link href="/images/apple-touch-icon-120x120.png"
+            sizes="120x120"
+            rel="apple-touch-icon">
+      <!-- iPhone ,iOS 6, retina -->
+      <link href="/images/apple-touch-icon-114x114.png"
+            sizes="114x114"
+            rel="apple-touch-icon">
+      <!-- iPad, iOS 7 -->
+      <link href="/images/apple-touch-icon-76x76.png"
+            sizes="76x76"
+            rel="apple-touch-icon">
+      <!-- iPad, iOS 6 -->
+      <link href="/images/apple-touch-icon-72x72.png"
+            sizes="72x72"
+            rel="apple-touch-icon">
+      <!-- iPhone, iOS 7 -->
+      <link href="/images/apple-touch-icon-60x60.png"
+            sizes="60x60"
+            rel="apple-touch-icon">
+      <!-- iPhone, iOS 6 -->
+      <link href="/images/apple-touch-icon-57x57.png"
+            sizes="57x57"
+            rel="apple-touch-icon">
+      <!-- iPad, retina, portrait -->
+      <link href="/images/apple-touch-startup-image-1536x2008.png"
+            media="(device-width: 768px) and (device-height: 1024px)
+                 and (orientation: portrait)
+                 and (-webkit-device-pixel-ratio: 2)"
+            rel="apple-touch-startup-image">
+      <!-- iPad, retina, landscape -->
+      <link href="/images/apple-touch-startup-image-1496x2048.png"
+            media="(device-width: 768px) and (device-height: 1024px)
+                 and (orientation: landscape)
+                 and (-webkit-device-pixel-ratio: 2)"
+            rel="apple-touch-startup-image">
+      <!-- iPad, portrait -->
+      <link href="/images/apple-touch-startup-image-768x1004.png"
+            media="(device-width: 768px) and (device-height: 1024px)
+                 and (orientation: portrait)
+                 and (-webkit-device-pixel-ratio: 1)"
+            rel="apple-touch-startup-image">
+      <!-- iPad, landscape -->
+      <link href="/images/apple-touch-startup-image-748x1024.png"
+            media="(device-width: 768px) and (device-height: 1024px)
+                 and (orientation: landscape)
+                 and (-webkit-device-pixel-ratio: 1)"
+            rel="apple-touch-startup-image">
+      <!-- iPhone 5 -->
+      <link href="/images/apple-touch-startup-image-640x1096.png"
+            media="(device-width: 320px) and (device-height: 568px)
+                 and (-webkit-device-pixel-ratio: 2)"
+            rel="apple-touch-startup-image">
+      <!-- iPhone, retina -->
+      <link href="/images/apple-touch-startup-image-640x920.png"
+            media="(device-width: 320px) and (device-height: 480px)
+                 and (-webkit-device-pixel-ratio: 2)"
+            rel="apple-touch-startup-image">
+      <!-- iPhone -->
+      <link href="/images/apple-touch-startup-image-320x460.png"
+            media="(device-width: 320px) and (device-height: 480px)
+                 and (-webkit-device-pixel-ratio: 1)"
+            rel="apple-touch-startup-image">
+    <!--<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700">-->
+    <style type="text/css">
+        body {
+            padding-top : 60px;
+            padding-bottom: 40px;
+        }
+        .top-buffer { margin-top:8px; }
+        @font-face {
+            font-family: 'Droid Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: url(../../s-BiyweUPV0v-yRb-cjciBsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+        }
+        @font-face {
+        font-family: 'Droid Sans';
+            font-style: normal;
+            font-weight: 700;
+            src: local('Droid Sans Bold'), local('DroidSans-Bold'), url(../../EFpQQyG9GqCrobXxL-KRMQFhaRv2pGgT5Kf0An0s4MM.woff) format('woff');
+        }
+    </style>
+    <!--<link rel='stylesheet' href='/stylesheets/bootstrap-responsive.css' />-->
+    <!--<link rel='stylesheet' href='/stylesheets/bootstrap-fileupload.min.css' />-->
+      <script src="/javascripts/jquery.min.js"></script>
+      <script src="/javascripts/bootstrap.min.js"></script>
+
+  </head>
+  <body>
+
+    <% include pagetop %>
+    <div class="container" id="container" >
+        <% if (locals.success && locals.success.length) { %>
+            <div class="alert alert-success fade in">
+                <%= locals.success %>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        <% } %>
+        <% if (locals.error && locals.error.length ) { %>
+            <div class="alert alert-danger fade in">
+                <%= locals.error %>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        <% } %>
+        <%- body %>
+    </div>
+    <hr>
+    <% include postscripts %>
+    <footer>
+        <p class="text-center"><small>Powered by <a href="http://www.liveneo.com.cn">Liveneo</a> | Copyright 2013 | @ <a href="http://www.liveneo.com.cn">Liveneo</a></small></p>
+    </footer>
+
+  </body>
+</html>

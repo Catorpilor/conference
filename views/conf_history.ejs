@@ -1,0 +1,37 @@
+<div class="row">
+    <% hconfs.forEach(function(confs,index){ %>
+        <div class="col-md-3">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h5>会议室名称:&nbsp;&nbsp;<span class="label label-default"><%= confs.confname %></span></h5>
+                    <h5>会议室号码:&nbsp;&nbsp;<span class="label label-default"><%= confs.conf_id %></span></h5>
+                    <hr/>
+                    <h5>开始时间:&nbsp;&nbsp;
+                        <% if (confs.start_time.getMinutes() < 10) { %>
+                        <span class="label label-info"><%= confs.start_time.toDateString() %> <%= confs.start_time.getHours() %>:0<%= confs.start_time.getMinutes() %></span>
+                        <% }else { %>
+                        <span class="label label-info"><%= confs.start_time.toDateString() %> <%= confs.start_time.getHours() %>:<%= confs.start_time.getMinutes() %></span>
+                        <% } %>
+                    </h5>
+                    <h5>结束时间:&nbsp;&nbsp;
+                        <% if (confs.end_time.getMinutes() < 10) { %>
+                        <span class="label label-danger" ><%= confs.end_time.toDateString() %> <%= confs.end_time.getHours() %>:0<%= confs.end_time.getMinutes() %></span>
+                        <% }else { %>
+                        <span class="label label-danger" ><%= confs.end_time.toDateString() %> <%= confs.end_time.getHours() %>:<%= confs.end_time.getMinutes() %></span>
+                        <% } %>
+                    </h5>
+                    <hr/>
+                    <h5>参会人数:&nbsp;&nbsp;
+                        <span class="add-on label label-success" style="color:#0f0f0f;text-align:center;background-color:#A3c406"><%= confs.paticpants.length %> 人</span>
+                        &nbsp;&nbsp;
+                        <% if( confs.c_status ) { %>
+                        <% var filename = confs.record_path.substring(confs.record_path.lastIndexOf('/')+1); %>
+                            <a href="/downloadrecording/<%= filename %>" ipath="<%= confs.record_path %>" id="drecord" >下载录音</a>
+                        <% } %>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+</div>
+

@@ -1,0 +1,199 @@
+<form class="form-horizontal" method="post" onsubmit="return confirm('确认预约该会议?')">
+	<fieldset>
+		<legend>预约会议</legend>
+        <div class="form-group">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                    <input type="text" class="form-control" id="confname" name="confname" placeholder="会议室名称">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-book"></i></span>
+                    <input type="text" class="form-control" id="confid" name="confid" placeholder="会议室号码" value="<%= Math.floor(Math.random() * 1000) + 8000 %>" >
+                </div>
+            </div>
+        </div>
+		<div class="form-group">
+			<div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				    <input type="text" class="form-control" id="confid" name="owner" value="<%= locals.user.username %>" disabled>
+                </div>
+			</div>
+        </div>
+        <div class="form-group">
+			<div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                    <% var t = new Date(); %>
+                    <% var month = t.getMonth() + 1; %>
+                    <% var date = t.getDate(); %>
+                    <% if( date < 10 ) { %>
+			<% date = '0'+date; %>
+                    <% } %>
+                    <% var content = t.getFullYear() +'-'+month+'-'+date+'T'+t.getHours()+':'; %>
+                    <% if( t.getMinutes() < 10 ) { %>
+                        <% content = content+0+t.getMinutes(); %>
+                    <% }else { %>
+                        <% content = content+t.getMinutes(); %>
+                    <% } %>
+		    <% console.log(content); %>
+				    <input type="datetime-local" class="form-control" id="starttime" name="starttime" type="-webkit-appearance:none;" placeholder="开始时间.(年-月-日 时:分)" value="<%= content %>">
+                </div>
+                <span class="help-block" id="swarning"></span>
+			</div>
+        </div>
+        <div class="form-group">
+			<div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+				    <input type="datetime-local"  class="form-control" id="endtime" name="endtime" placeholder="结束时间.(年-月-日 时:分)" value="<%= content %>">
+                </div>
+                <span class="help-block" id="ewarning"></span>
+			</div>
+		</div>
+        <div class="form-group">
+			<div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+				    <input type="password" class="form-control" id="mpwd" name="mpwd" placeholder="管理员密码">
+                </div>
+			</div>
+		</div>
+        <div class="form-group">
+			<div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+				    <input type="password" class="form-control" id="opwd" name="opwd" placeholder="会议密码">
+                </div>
+			</div>
+		</div>
+        <div class="form-group">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <% include contacts %>
+                </div>
+                <input type="checkbox" class="checkbox-inline" id="gselect"> 添加全局联系人
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-volume-up"></i></span>
+                    <select class="form-control" name="autocall">
+                        <option value="open">自动外呼:开启</option>
+                        <option value="close">自动外呼:关闭</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <hr>
+		<button type="submit" class="btn btn-primary" id="commit">提交</button>
+	</fieldset>
+</form>
+<script src="/javascripts/bootstrap-multiselect.js"></script>
+<script src="/javascripts/multi-select.js"></script>
+<script>
+    $(document).ready(function(){
+        var curtime = $('#starttime').val();
+        console.log(curtime);
+        var isTargetwindow=false;
+        $(window).blur(function(e){
+            console.log(e.target);
+            isTargetwindow=true;
+        });
+        $(window).focus(function(){
+            isTargetwindow=false;
+        });
+        $('#gselect').click(function(){
+            if($(this).is(':checked')){
+                 $.ajax({
+                     type: 'POST',
+                     contentType: 'applicatin/json',
+                     url: '/getgcontacts/',
+                     success: function(data){
+                         for(var i =0 ;i<data.length;++i){
+                             var val = '{username:\''+data[i].cname+'\',rnumber:{office:'+data[i].cinfo.office+',mobile:'+data[i].cinfo.mobile+'},phonetype:'+data[i].ctype+'}';
+                             $('<option class="gc">').val(val).text(data[i].cname).appendTo('.multiselect');
+                             $('.multiselect').multiselect('rebuild');
+                         }
+                     }
+                });
+            }else{
+                $('option').remove('.gc');
+                $('.multiselect').multiselect('rebuild');
+            }
+        });
+        $('#starttime').bind('focus',function(e){
+            if(!isTargetwindow){
+                startTimer('start');
+            }
+        });
+        $('#starttime').bind('blur',function(e){
+            if(!isTargetwindow){
+                endTimer();
+            }
+        });
+        $('#endtime').bind('focus',function(e){
+            if(!isTargetwindow){
+                startTimer('end');
+            }
+        });
+        $('#endtime').bind('blur',function(e){
+            if(!isTargetwindow){
+                endTimer();
+            }
+        });
+        var timer;
+        var $stime = $('#starttime'),
+            $swarn = $('#swarning'),
+            $ewarn = $('#ewarning'),
+            $etime = $('#endtime'),
+            checkInputChange=function() {
+                var itemp = $stime.val();
+                if(curtime !== itemp ){
+                    //change occurs
+                    if( itemp < curtime ) {
+                        //wrong can not reserve earlier time conf
+                        $swarn.html('不能预约当前时间之前的会议');
+                    }else{
+                        $swarn.html('');
+                    }
+                }
+            },
+            checkEndChange=function() {
+                var itemp = $stime.val();
+                if(itemp > $etime.val() ){
+                    //end time is earlier than the start time
+                    $ewarn.html('结束时间不能早于开始时间');
+                }else{
+                    //to check duration of the conference
+                    itemp = itemp.replace('T',' ').replace('Z','');
+                    var iend = $etime.val().replace('T',' ').replace('Z','');
+                    var sstime = new Date(itemp),
+                        eetime = new Date(iend);
+                    if(sstime.getTime()+300000 > eetime.getTime() ){
+                        //less than 5 mins
+                        $ewarn.html('会议时间少于5分钟');
+                    }else{
+                        $ewarn.html('');
+                    }
+                }
+            },
+            startTimer = function(type) {
+                if(type === 'start'){
+                    timer = setInterval(checkInputChange,1500);
+                }else{
+                    timer = setInterval(checkEndChange,1500);
+                }
+            },
+            endTimer = function() {
+                timer=clearInterval(timer);
+            };
+    });
+</script>

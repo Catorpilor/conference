@@ -1,0 +1,23 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.2.5",
+    "ejs": "*",
+    "express-partials": "*",
+    "connect-flash" : "*",
+    "socket.io" : "*",
+    "crypto" : "*",
+    "connect-mongo" : "*",
+    "mongoose" : "*",
+    "getmac" : "*",
+    "xml2js" : "*",
+    "nodemailer" : "*",
+    "iconv-lite" :"*",
+    "csv" : "*"
+  }
+}

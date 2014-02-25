@@ -1,0 +1,68 @@
+<% if (confs.length <= maxconf) { %> 
+    <p><a class="btn btn-info" href="/rmeeting/<%= new Date().getTime() %>">预约会议</a></p>
+<% } %>
+<div class="row">
+    <% confs.forEach(function(confs,index){ %>
+        <div class="col-sm-5 col-md-4">
+            <div class="thumbnail">
+                <img src="/images/conf.jpg" style="width: 300px; height: 200px">
+                <div class="caption">
+                    <h5>会议室名称:&nbsp;&nbsp;<span class="label label-default"><%= confs.confname %></span></h5>
+                    <h5>会议室号码:&nbsp;&nbsp;<span class="label label-default"><%= confs.conf_id %></span></h5>
+                    <hr/>
+                    <h5>开始时间:&nbsp;&nbsp;
+                        <% if (confs.start_time.getMinutes() < 10) { %>
+                        <span class="label label-info"><%= confs.start_time.toDateString() %> <%= confs.start_time.getHours() %>:0<%= confs.start_time.getMinutes() %></span>
+                        <% }else { %>
+                        <span class="label label-info"><%= confs.start_time.toDateString() %> <%= confs.start_time.getHours() %>:<%= confs.start_time.getMinutes() %></span>
+                        <% } %>
+                    </h5>
+                    <h5>结束时间:&nbsp;&nbsp;
+                        <% if (confs.end_time.getMinutes() < 10) { %>
+                        <span class="label label-danger" ><%= confs.end_time.toDateString() %> <%= confs.end_time.getHours() %>:0<%= confs.end_time.getMinutes() %></span>
+                        <% }else { %>
+                        <span class="label label-danger" ><%= confs.end_time.toDateString() %> <%= confs.end_time.getHours() %>:<%= confs.end_time.getMinutes() %></span>
+                        <% } %>
+                    </h5>
+                    <hr/>
+                    <p>
+                        <a class="btn btn-primary" role="button" href="/wmeeting/<%= confs.conf_id %>/<%= confs.start_time.getTime() %>">监控</a>
+                        <% if( ctime + 1800000 < confs.start_time.getTime() ) { %>
+                            <a role="button" class="btn btn-danger" href="/" id="delete_conf" conf="<%= confs.conf_id %>" owner="<%= username %>" stime="<%= confs.start_time.getTime() %>">删除</a>
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $(".row .thumbnail").delegate('a#delete_conf','click',function(e){
+            e.preventDefault();
+            console.log('delete confs');
+            var data={};
+            alert($(this).attr('conf'));
+            data.confid = $(this).attr('conf');
+            data.owner = $(this).attr('owner');
+            data.stime = $(this).attr('stime')*1;
+            console.log(data);
+            if(confirm("确定删除?")){
+                console.log(1);
+                $.ajax({
+                    type: 'POST',
+                    data: data,
+                    conentType: 'application/json',
+                    url: '/delconf/',
+                    success: function(data) {
+                        console.log('sucess');
+                        console.log(JSON.stringify(data));
+                        window.location.href="/";
+                    }
+                });
+            }else{
+                console.log(2);
+            }
+        });
+    });
+</script>

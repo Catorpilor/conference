@@ -1,0 +1,355 @@
+<div class="jumbotron">
+    <h3>联系人统计</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>最大用户数</th>
+                <th>当前用户数</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="badge badge-important"><%= maxnum %></span></td>
+                <td><span class="badge badge-info"><%= curnum %></span></td>
+            </tr>
+        </tbody>
+    </table>
+    <% if( maxnum > curnum ) { %>
+        <p>
+            <button data-target="#contactmodal"  class="btn btn-info" data-toggle="modal">添加联系人</button>
+            <a href="/u/<%= username %>/importcontacts" role="button" class="btn btn-primary bimport hide">导入联系人</a>
+            <a href="/u/<%= username %>/exportcontacts" role="button" class="btn btn-success bexport hide">导出联系人</a>
+        </p>
+    <% } %>
+</div>
+<p class="cur_nums hide"><%= curnum %></p>
+<p class="owner hide"><%= username %></p>
+<div id="contactmodal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="myModalLabel">联系人信息 <small>红色为必填项(移动电话座机填任一即可)</small></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row container top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group has-error">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input type="text" class="form-control" id="contact_name" name="c_name" placeholder="姓名">
+                        </div>
+                        <!--<span class="help-inline text-danger">*</span>-->
+                    </div>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group has-error">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
+                            <input type="text" class="form-control" id="contact_mobile" name="c_mobile" placeholder="移动电话">
+                        </div>
+                    </div>
+                    <!--<span class="help-inline text-danger">*</span>-->
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group has-error">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                            <input type="text" class="form-control" id="contact_office" name="c_office" placeholder="座机">
+                        </div>
+                    </div>
+                </div>
+                <div class="row container has-error top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                            <input type="text" class="form-control" id="contact_email" name="c_email" placeholder="邮箱">
+                        </div>
+                    </div>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-pushpin"></i></span>
+                            <select class="form-control" name="phone_type" id="ptype">
+                                <option value="local">本地</option>
+                                <option value="non-local">外地</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-warning">取消</button>
+                <button class="btn btn-primary ctconfirm" uname="<%= username %>">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="editcontactmodal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="myModalLabel">编辑联系人</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row container top-buffer">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input type="text" class="form-control" id="contacts_name" name="c_name" placeholder="姓名" disabled>
+                        </div>
+                        <!--<span class="help-inline text-danger">*</span>-->
+                    </div>
+                    <p class="help-block">*</p>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
+                            <input type="text" class="form-control" id="contacts_mobile" name="c_mobile" placeholder="移动电话">
+                        </div>
+                    </div>
+                    <!--<span class="help-inline text-danger">*</span>-->
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                            <input type="text" class="form-control" id="contacts_office" name="c_office" placeholder="座机">
+                        </div>
+                    </div>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                            <input type="text" class="form-control" id="contacts_email" name="c_email" placeholder="邮箱">
+                        </div>
+                    </div>
+                </div>
+                <div class="row container top-buffer">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-pushpin"></i></span>
+                            <select class="form-control" name="phone_type" id="pstype">
+                                <option value="local">本地</option>
+                                <option value="non-local">外地</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-warning">取消</button>
+                <button class="btn btn-primary cupdate" uname="<%= username %>">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<% if (curnum) { %>
+<div class="table-responsive">
+    <table class="table table-bordered" id="userlist">
+        <thead>
+        <tr>
+            <th>姓名</th>
+            <th>动作</th>
+        </tr>
+        </thead>
+        <tbody id="list-content">
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5">
+                <div class="pagination" id="pagination" style="margin:4px 0 0 0"></div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+<% } %>
+<script src="/javascripts/jquery.pagination.js"></script>
+<script>
+    $(document).ready(function(){
+        if( screen.width>=1024 && screen.height>=768){
+            $('.bimport').removeClass('hide');
+            if( $('.cur_nums').html() > 0 ) {
+                $('.bexport').removeClass('hide');
+            }else{
+                $('.bexport').addClass('hide');
+            }
+        }
+        var $modal = $('#contactmodal');
+        $modal.on('click','.ctconfirm',function(){
+            var cname = $('#contact_name').val();
+            var cmobile = $('#contact_mobile').val();
+            var coffice = $('#contact_office').val();
+            var cemail = $('#contact_email').val();
+            var ptype = $('#ptype').val();
+            console.log(cname,cmobile,coffice,cemail);
+            var uname = $('.owner').html();
+            $modal.modal('hide');
+            if( cname && cmobile && cemail || cname && coffice && cemail){
+                var data={};
+                data.name = cname;
+                data.mobile = cmobile;
+                data.office = coffice;
+                data.email = cemail;
+                if(ptype == 'local'){
+                    data.type = 1;
+                }else{
+                    data.type = 0;
+                }
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url : '/u/'+uname+'/addcontact/',
+                    success : function(data){
+                        console.log(data);
+                        window.location.href="/u/"+uname;
+                    }
+                });
+            }else{
+                alert('姓名邮箱联系方式不能为空!');
+            }
+        });
+        function initPagination(data) {
+            // count entries inside the hidden content
+            // Create content inside pagination element
+            $("#pagination").pagination(data.length, {
+                callback: function(page_id){
+                    $('#list-content').html('');
+                    for(var i =0;i<10;++i){
+                        if(page_id*10+i < data.length ){
+                            $('#list-content').append('<tr><td><a id="modify_contact" href="/" uname="'+data[page_id*10+i].cname+'" mobile="'+data[page_id*10+i].cinfo.mobile+
+                                    '" office="'+data[page_id*10+i].cinfo.office+'" email="'+data[page_id*10+i].cemail+'" itype="'+data[page_id*10+i].ctype+'" >'+data[page_id*10+i].cname+
+                                    '</a></td><td><a role="button" class="btn btn-danger cdel" val="'+data[page_id*10+i].cname+'" owner="'
+                                    +owner+'">删除</a></td></tr>');
+                        }
+                    }
+                    return false;
+                },
+                load_first_page: true,
+                prev_text: '上一页',
+                next_text: '下一页',
+                items_per_page:10 // Show only 10 items per page
+            });
+        }
+        if( $('.cur_nums').html() != 0 ){
+            var data={};
+            data.status = 'get all';
+            var owner = $('.owner').html();
+            $.ajax({
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                url: '/u/'+owner+'/getcontacts/',
+                success : function(data){
+                    var pages = Math.ceil(data.length/10);
+                    //first load page 0
+                    $('#list-content').html('');
+                    for(var i=0;i<10;++i){
+                        if( i < data.length)
+                            $('#list-content').append('<tr><td><a id="modify_contact" href="/" uname="'+data[i].cname+'" mobile="'+data[i].cinfo.mobile+
+                                '" office="'+data[i].cinfo.office+'" email="'+data[i].cemail+'" itype="'+data[i].ctype+'" >'+data[i].cname+
+                                '</a></td><td><a role="button" class="btn btn-danger cdel" val="'+data[i].cname+'" owner="'
+                                +owner+'">删除</a></td></tr>');
+                    }
+                    initPagination(data);
+//                    $('#pagination').pagination(data.length, {
+//                        current_page: 0,
+//                        items_per_page: 10,
+//                        num_display_entries: pages,
+//                        callback: function(page_id){
+//                            $('#list-content').html('');
+//                            for(var i=0;i<10;++i){
+//                                if( page_id*10+i < data.length)
+//                                    $('#list-content').append('<tr><td><a id="modify_contact" href="/" uname="'+data[page_id*10+i].cname+'" mobile="'+data[page_id*10+i].cinfo.mobile+
+//                                        '" office="'+data[page_id*10+i].cinfo.office+'" email="'+data[page_id*10+i].cemail+'" itype="'+data[page_id*10+i].ctype+'" >'+data[page_id*10+i].cname+
+//                                        '</a></td><td><a role="button" class="btn btn-danger cdel" val="'+data[page_id*10+i].cname+'" owner="'
+//                                        +owner+'">删除</a></td></tr>');
+//                            }
+//                        },
+//                        load_first_page: true,
+//                        prev_text: '上一页',
+//                        next_text: '下一页'
+//                    });
+                }
+            });
+        }
+        $('#list-content').delegate('a#modify_contact','click',function(e){
+            e.preventDefault();
+            var cname = $(this).attr('uname');
+            var cmobile = $(this).attr('mobile');
+            var coffice = $(this).attr('office');
+            var cemail = $(this).attr('email');
+            var ctype = $(this).attr('itype');
+            $('#editcontactmodal').modal({show: true});
+            $('#editcontactmodal').on('shown.bs.modal',function(){
+                $('.modal-body #contacts_name').val(cname);
+                $('.modal-body #contacts_mobile').val(cmobile);
+                if(ctype == 'true'){
+                    $('.modal-body #pstype').get(0).selectedIndex = 0;
+                }else{
+                    $('.modal-body #pstype').get(0).selectedIndex = 1;
+                }
+                $('.modal-body #contacts_office').val(coffice);
+                $('.modal-body #contacts_email').val(cemail);
+            });
+            $('#editcontactmodal').on('hidden.bs.modal',function(){
+                $('.modal-body #contacts_name').val('');
+                $('.modal-body #contacts_mobile').val('');
+                $('.modal-body #contacts_office').val('');
+                $('.modal-body #contacts_email').val('');
+            });
+            $('#editcontactmodal').on('click','.cupdate',function(){
+                var cmobile = $('#contacts_mobile').val();
+                var coffice = $('#contacts_office').val();
+                var cemail = $('#contacts_email').val();
+                var ctype = $('#pstype').val();
+                console.log(cname,cmobile,coffice,cemail);
+                var uname = $('.owner').html();
+                $modal.modal('hide');
+                if( cname && cmobile && cemail || cname && coffice && cemail){
+                    var data={};
+                    data.name = cname;
+                    data.mobile = cmobile;
+                    data.office = coffice;
+                    data.email = cemail;
+                    if(ctype=='local'){
+                        data.type = 1;
+                    }else{
+                        data.type = 0;
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json',
+                        url : '/u/'+uname+'/updatecontact/',
+                        success : function(data){
+                            console.log(data);
+                            window.location.href="/u/"+uname;
+                        }
+                    });
+                }else{
+                    alert('姓名邮箱联系方式不能为空!');
+                }
+            });
+        });
+        $('#list-content').delegate('a.cdel','click',function(){
+            if(confirm('确定删除?')){
+                var data={};
+                var uname = $('.owner').html();
+                data.username = $(this).attr('val');
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: '/u/'+uname+'/delcontact/',
+                    success: function(data){
+                        window.location.href="/u/"+uname;
+                    }
+                });
+            }
+        });
+    });
+</script>

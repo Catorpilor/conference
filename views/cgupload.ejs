@@ -1,0 +1,29 @@
+<form class="form-horizontal" action="/importglobalcontacts" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <legend>导入</legend>
+        <div class="fileinput fileinput-new" data-provides="fileinput">
+            <span class="btn btn-default btn-file"><span class="fileinput-new">选择文件</span><span class="fileinput-exists">更改</span><input type="file" name="..."></span>
+            <span class="fileinput-filename"></span>
+            <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+        </div>
+        <button type="submit" class="btn btn-info">导入</button>
+    </fieldset>
+</form>
+<script src="/javascripts/fileinput.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.fileinput').on('change.bs.fileinput',function(e){
+            if(e.isTrigger !== undefined ){
+                var filePath = $('.fileinput-filename').html();
+                if(filePath)
+                {
+                    var ext = filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
+                    if(ext !== 'csv'){
+                        $('.fileinput').fileinput('clear');
+                        alert('请选择CSV格式的文件');
+                    }
+                }
+            }
+        });
+    });
+</script>

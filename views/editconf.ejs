@@ -1,0 +1,73 @@
+<form class="form-horizontal" method="post">
+	<fieldset>
+		<legend>编辑会议</legend>
+		<div class="control-group">
+			<div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-book"></i></span>
+				    <input type="text" class="input-xlarge" id="confid" name="confid" value="<%= conf.conf_id %>" disabled>
+                </div>
+			</div>
+        </div>
+		<div class="control-group">
+			<div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-user"></i></span>
+				    <input type="text" class="input-xlarge" id="confid" name="owner" value="<%= locals.user.username %>" disabled>
+                </div>
+			</div>
+        </div>
+        <div class="control-group">
+			<div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-calendar"></i></span>
+				    <input type="text" class="input-xlarge" id="starttime" name="starttime" value="<%= conf.start_time %>" >
+                </div>
+			</div>
+        </div>
+        <div class="control-group">
+			<div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-calendar"></i></span>
+				    <input type="text" class="input-xlarge" id="endtime" name="endtime" value="<%= conf.end_time %>">
+                </div>
+			</div>
+		</div>
+        <div class="control-group">
+			<div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-lock"></i></span>
+				    <input type="password" class="input-xlarge" id="mpwd" name="mpwd" value="<%= conf.m_pwd %>">
+                </div>
+			</div>
+		</div>
+        <div class="control-group">
+			<div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-lock"></i></span>
+				    <input type="password" class="input-xlarge" id="opwd" name="opwd" value="<%= conf.n_pwd %>">
+                </div>
+			</div>
+		</div>
+        <div class="control-group">
+            <div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-volume-up"></i></span>
+                    <select name="autocall">
+                        <% if(conf.auto_call) { %>
+                            <option value="open" selected>自动外呼:开启</option>
+                            <option value="close">自动外呼:关闭</option>
+                        <% } else { %>
+                            <option value="open">自动外呼:开启</option>
+                            <option value="close" selected>自动外呼:关闭</option>
+                        <% } %>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <hr>
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary" id="commit">提交</button>
+		</div>
+	</fieldset>
+</form>

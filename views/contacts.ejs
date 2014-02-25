@@ -1,0 +1,19 @@
+<% if (bhascons) { %>
+    <select class="multiselect" multiple="multiple" name="memlists">
+        <% contacts.forEach(function(pcon){ %> 
+            <option value="{username: '<%= pcon.cname %>', rnumber: <%= pcon.cinfo %>, email : '<%= pcon.cemail %>', phonetype : <%= pcon.ctype %>}"><%= pcon.cname %></option>
+        <% }) %>
+    </select>
+<% } else { %>
+    <select class="multiselect" multiple="multiple" name="memlists">
+        <% contacts.forEach(function(pcon){ %>
+            <% if( pcon.username != 'admin') { %> 
+                <% if(pcon.pLocate == plocal) { %> 
+                    <option value="{username: '<%= pcon.username %>', rnumber: <%= pcon.Contact_info %>, email: '<%= pcon.email %>', phonetype : true}"><%= pcon.username %></option>
+                <% }else { %> 
+                    <option value="{username: '<%= pcon.username %>', rnumber: <%= pcon.Contact_info %>, email: '<%= pcon.email %>', phonetype : false}"><%= pcon.username %></option>
+                <% } %>
+            <% } %>
+        <% }) %>
+    </select>
+<% } %>
