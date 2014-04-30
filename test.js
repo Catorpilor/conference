@@ -2,16 +2,29 @@
 var getmac = require('getmac');
 var crypto = require('crypto');
 
-var md5 = crypto.createHash('md5');
-console.log(md5);
+//var md5 = crypto.createHash('md5');
+//console.log(md5);
+//
+//getmac.getMac(function(err,macAddress){
+//    if(err) throw err;
+//   // console.log(macAddress);
+//    console.log('90:FB:A6:1C:49:A9');
+//    var b64f = md5.update('90:FB:A6:1C:49:A9').digest('base64');
+//    console.log(b64f);
+//});
 
-getmac.getMac(function(err,macAddress){
-    if(err) throw err;
-   // console.log(macAddress);
-    console.log('90:FB:A6:1C:49:A9');
-    var b64f = md5.update('90:FB:A6:1C:49:A9').digest('base64');
-    console.log(b64f);
-});
+function md5(str){
+    var md5sum = crypto.createHash('md5');
+    md5sum.update(str);
+    str = md5sum.digest('hex');
+    return str;
+};
+
+var a = new Date('2014-04-30 00:00:00');
+var b = new Date('2014-04-30 17:40:00');
+console.log(a.getTime(), b.getTime());
+
+console.log(md5('00:0C:29:B4:C5:72'+ a.getTime()+ b.getTime()));
 /*
 var fs = require('fs');
 var contents = "module.exports =";

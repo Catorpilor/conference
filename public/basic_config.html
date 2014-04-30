@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>朗泰会议系统配置</title>
+        <title>会议系统配置</title>
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -13,48 +13,120 @@
     <body>
         <div class="container">
             <h3>配置界面</h3>
+            <hr/>
             <form class="form-horizontal" method="post" onsubmit="return confirm('确定保存?')">
                 <fieldset>
                     <div class="form-group">
-                        <div class="col-md-5">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
-                                <input type="text" class="form-control" id="did_prefix" name="did" placeholder="DID前缀">
+                        <p>基本配置:</p>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                                    <input type="text" class="form-control" id="did_prefix" name="did" placeholder="DID前缀(可以为空)">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-inbox"></i></span>
+                                    <input type="text" class="form-control" id="fsdomain" name="fs" placeholder="IP地址">
+                                </div>
                             </div>
                         </div>
-                        <p class="help-block">可以为空</p>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-5">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-inbox"></i></span>
-                                <input type="text" class="form-control" id="fsdomain" name="fs" placeholder="IP地址">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-tower"></i></span>
+                                    <input type="text" class="form-control" id="lcity" name="local_city" placeholder="当前城市">
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-md-5">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-arrow-right"></i></span>
-                                <input type="text" class="form-control" id="inboundcall" name="icall" placeholder="内部呼叫前缀">
+                        <p>Sip_Trunk配置:</p>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-cloud"></i></span>
+                                    <input type="text" class="form-control" id="sip_trunk_ip" name="trunk_ip" placeholder="远端IP地址">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                                    <input type="text" class="form-control" id="sip_trunk_port" name="trunk_port" placeholder="远端端口">
+                                </div>
                             </div>
                         </div>
-                        <p class="help-block">根据LCP内部呼叫设置:sofia/internal/</p>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-5">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-arrow-left"></i></span>
-                                <input type="text" class="form-control" id="outboundcall" name="ocall" placeholder="外部呼叫前缀">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-file"></i></span>
+                                    <input type="text" class="form-control" id="sip_trunk_name" name="trunk_name" placeholder="Trunk名字">
+                                </div>
                             </div>
                         </div>
-                        <p class="help-block">根据LCP外呼设置:(网关_sofia/gateway/网关名/),(E1_freetdm/1/a)</p>
                     </div>
                     <div class="form-group">
-                        <div class="col-md-5">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-tower"></i></span>
-                                <input type="text" class="form-control" id="lcity" name="local_city" placeholder="当前城市">
+                        <p>呼叫设置:</p>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-arrow-right"></i></span>
+                                    <input type="text" class="form-control" id="inboundcall" name="icall" placeholder="内部呼叫设置">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-arrow-left"></i></span>
+                                    <input type="text" class="form-control" id="outboundcall" name="obound" placeholder="外部呼叫设置">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                                    <input type="text" class="form-control" id="inboundconfdid" name="confdid" placeholder="接入号码">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                                    <input type="text" class="form-control" id="outboundcallprefix" name="obprefix" placeholder="外呼前缀">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                                    <input type="text" class="form-control" id="obcallnumber" name="ocallnumber" placeholder="外呼显示号码">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <p>邮件设置(SMTP):</p>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
+                                    <input type="text" class="form-control" id="mail_server" name="mserer" placeholder="发送邮件服务器">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                    <input type="text" class="form-control" id="mail_user" name="muser" placeholder="用户名">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-arrow-left"></i></span>
+                                    <input type="text" class="form-control" id="mail_auth" name="mauth" placeholder="密码">
+                                </div>
                             </div>
                         </div>
                     </div>

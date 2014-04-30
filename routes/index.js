@@ -8,7 +8,6 @@ var csv = require('csv');
 var url = require('url');
 var gsettings = require('../globalsetting.js');
 var callsettings = require('../callsettings.js');
-var config = require('../config.js');
 var User = require('../modules/user.js');
 var GlobalContacts = require('../modules/globalcontacts.js');
 var Conf = require('../modules/rconf.js');
@@ -55,6 +54,7 @@ module.exports = function(app) {
                 if(puser){
                     inum = puser.contacts.length;
                 }
+                var config = require('../config.js');
                 var maxconf = new Buffer(config.maxconfcount,'base64');
                 maxconf = maxconf.toString();
                 res.render('index',{title: '朗泰会议系统',confs:users.Rconf, username:req.session.user.username,ctime: dtime,contacts:inum,maxconf: maxconf*1});
@@ -62,9 +62,10 @@ module.exports = function(app) {
             //res.render('index',{title: '朗泰会议系统',confs:users.Rconf, username:req.session.user.username,ctime: dtime});
         });
     }else if(req.session.user && req.session.user.username == 'admin') {
-        fs.exists('/tmp/Liveneo_conf.xml',function(exists){
+        fs.exists('/usr/src/Liveneo_conf.xml',function(exists){
             if(exists){
                 User.find({}, 'username Contact_info email', function(err,pdocs) {
+                    var config = require('../config.js');
                     console.log(config.maxmemcount,config.maxconfcount);
                     var mems = new Buffer(config.maxmemcount,'base64');
                     mems = mems.toString();
@@ -248,6 +249,7 @@ module.exports = function(app) {
                   //getcurrent count
                   User.find({},'username',function(err,pdocs){
                       if(err) throw err;
+                      var config = require('../config.js');
                       var mem = new Buffer(config.maxmemcount,'base64');
                       mem = mem.toString();
                       if(pdocs.length + count - 2 > mem*1){
@@ -332,8 +334,8 @@ module.exports = function(app) {
                               iinfo.office = line[2];
                               ipeople.cinfo = iinfo;
                               if(line[4] == 'null')
-                                  line[4] = gsettings.getLocal();
-                              if(line[4] == gsettings.getLocal())
+                                  line[4] = callsettings.lcity;
+                              if(line[4] == callsettings.lcity)
                                   ipeople.ctype = 1;
                               else
                                   ipeople.ctype = 0;
@@ -363,68 +365,70 @@ module.exports = function(app) {
        var temp_path = req.files.ifile.path;
        var type = req.files.ifile.type;
        var ext = type.substring(type.lastIndexOf('/')+1).toLowerCase();
-       var target_path = '/tmp/Liveneo_conf.'+ext;
-
+       var target_path = '/usr/src/Liveneo_conf.'+ext;
+       var shfile_path = '/usr/local/src/conf_config';
        fs.readFile(temp_path,function(err,data){
             if(err) throw err;
             parseString(data,function(err,result){
                 var fts = result.Liveneo.License[0].Features[0].Feature;
                 console.log(fts);
                 var tempsig = result.Liveneo.Signature[0];
+                var stime = new Date(fts[2].Value[0]);
+                var etime = new Date(fts[3].Value[0]);
+                if(etime.getTime() < Date.now()){
+                    req.flash('error','授权已过期请重新申请');
+                    return res.redirect('/');
+                }else{
+                    getmac.getMac(function(err,macaddress){
+                        if(err) throw err;
+                        if(md5(macaddress+stime.getTime()+etime.getTime()) == result.Liveneo.Signature[0]){
+                            var fstream = fs.createWriteStream('./config.js',{flag:'w'});
+                            var obj = {};
+                            var bvalue = fts[0].Value[0];
+                            console.log(bvalue);
+                            obj.maxmemcount = new Buffer(bvalue).toString('base64');
+                            bvalue = fts[1].Value[0];
+                            console.log(bvalue);
+                            obj.maxconfcount = new Buffer(bvalue).toString('base64');
+                            var confcountsetting = "sh "+shfile_path+'/confsetting.sh '+bvalue;
+                            console.log(confcountsetting);
+                            ishell.run(confcountsetting);
+                            var contents = "module.exports = "+JSON.stringify(obj);
+                            fstream.write(contents);
+                            var content = "nohup node "+shfile_path+"/Lic/licdaemon.js "+stime.getTime()+' '+etime.getTime()+' '+result.Liveneo.Signature[0]+' &';
+                            ishell.run(content);
+                            ishell.run("chkconfig --add licd");
 
-                var md5 = crypto.createHash('md5');
-                getmac.getMac(function(err,macaddress){
-                    if(err) throw err;
-                    var bmac = md5.update(macaddress).digest('base64');
-                    if(bmac == result.Liveneo.Signature[0]){
-                        var fstream = fs.createWriteStream('./config.js',{flag:'w'});
-                        var obj = {};
+                            fs.openSync(target_path,'wx+',755);
+                            //remove file
+                            fs.rename(temp_path,target_path,function(err){
+                                if(err) {
+                                    console.log(err);
+                                }
+                                fs.unlink(temp_path,function(){
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                    req.flash('success','导入成功');
+                                    res.redirect('/');
+                                });
+                            });
+                        }else{
+                            req.flash('error','文件验证错误请重新导入');
+                            return res.redirect('/');
+                        }
+                    });
+                }
 
-                        var bvalue = fts[0].Value[0];
-                        console.log(bvalue);
-                        obj.maxmemcount = new Buffer(bvalue).toString('base64');
-                        /*
-                        for(var j=0;j<bvalue*1;++j)
-                            gsettings.increment_mem();
-                            */
-                        bvalue = fts[1].Value[0];
-                        console.log(bvalue);
-                        obj.maxconfcount = new Buffer(bvalue).toString('base64');
-                        
-                        var contents = "module.exports = "+JSON.stringify(obj);
-                        fstream.write(contents);
-
-                        /*
-                        for(var i=0;i<bvalue*1;++i)
-                            gsettings.increment_conf();
-                        */
-                        
-                        fs.openSync(target_path,'wx+',755);
-                       //remove file
-                       fs.rename(temp_path,target_path,function(err){
-                           if(err) {
-                               console.log(err);
-                           }
-                           fs.unlink(temp_path,function(){
-                               if(err){
-                                   console.log(err);
-                               }
-                               req.flash('success','导入成功');
-                               res.redirect('/');
-                           });
-                       });
-                    }else{
-                        req.flash('error','文件验证错误请重新导入');
-                        return res.redirect('/');
-                    }
-                });
 
             });
        });
   });
 
   app.post('/dellic',function(req,res){
-      ishell.run("rm -f "+'/tmp/Liveneo_conf.xml');
+      ishell.run("rm -f "+'/usr/src/Liveneo_conf.xml');
+
+      ishell.run("rm -f /usr/local/src/liveneo_conference/config.js");
       /*
       for(var i=gsettings.getMem(); i>0;--i)
           gsettings.decrement_mem();
@@ -739,6 +743,7 @@ module.exports = function(app) {
   
   app.get('/rmeeting/:stime',checkLogin);
   app.get('/rmeeting/:stime',function(req,res){
+      var config = require('../config.js');
       var maxconf = new Buffer(config.maxconfcount,'base64');
       maxconf = maxconf.toString();
       console.log(maxconf*1,req.session.user.Rconf);
@@ -1159,6 +1164,13 @@ module.exports = function(app) {
         });
     });
   });
+
+  function md5(str){
+      var md5sum = crypto.createHash('md5');
+      md5sum.update(str);
+      str = md5sum.digest('hex');
+      return str;
+  }
 
   function checkNotLogin(req,res,next){
 	if(req.session.user){

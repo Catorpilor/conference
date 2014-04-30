@@ -153,7 +153,12 @@ io.sockets.on('connection',function(socket){
         console.log('add member');
         var command = "api bgapi conference "+data.conf_id + " dial ";
         if(data.flag){
-            command = command + "{ignore_early_media=true}"+gsettings.inBoundCall+data.d_num+"@172.16.1.100";
+            if(gsettings.inBoundCall.indexOf('internal') !== -1 ){
+                command = command + "{ignore_early_media=true}"+gsettings.inBoundCall+data.d_num+gsettings.fsdomain;
+            }else{
+                command = command + "{ignore_early_media=true}"+gsettings.inBoundCall+data.d_num;
+            }
+
         }else{
             command = command + "{ignore_early_media=true}"+gsettings.OutBoundCall+data.d_num;
         }

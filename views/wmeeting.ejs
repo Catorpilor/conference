@@ -31,21 +31,33 @@
 
     </div>
 
-    <div id="mymodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-header">
-            <h4 id="myModalLabel">添加与会人</h4>
-        </div>
-        <div class="modal-body">
-            <div class="controls">
-                <div class="input-prepend">
-                    <span class="add-on"><i class="icon-user"></i></span>
-                    <input type="text" class="input-xlarge" id="fordestnum" name="destnum" placeholder="请输入被叫号码">
+    <div id="mymodal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="myModalLabel">添加与会人</h4>
+                </div>
+                <div class="modal-body">
+                    <!--<div class="controls">-->
+                        <!--<div class="input-prepend">-->
+                            <!--<span class="add-on"><i class="icon-user"></i></span>-->
+                            <!--<input type="text" class="input-xlarge" id="fordestnum" name="destnum" placeholder="请输入被叫号码">-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <div class="row container top-buffer">
+                        <div class="col-md-5">
+                            <div class="input-group ">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                <input type="text" class="form-control" id="fordestnum" name="destnum" placeholder="请输入被叫号码">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn">取消</button>
+                    <button class="btn btn-primary confirm">确定</button>
                 </div>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button data-dismiss="modal" class="btn">取消</button>
-            <button class="btn btn-primary confirm">确定</button>
         </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
