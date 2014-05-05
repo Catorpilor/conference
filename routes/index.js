@@ -54,10 +54,17 @@ module.exports = function(app) {
                 if(puser){
                     inum = puser.contacts.length;
                 }
-                var config = require('../config.js');
-                var maxconf = new Buffer(config.maxconfcount,'base64');
-                maxconf = maxconf.toString();
-                res.render('index',{title: '朗泰会议系统',confs:users.Rconf, username:req.session.user.username,ctime: dtime,contacts:inum,maxconf: maxconf*1});
+                fs.readFile(__dirname+'/../config.js','utf-8',function(err,data){
+                    if(err) throw err;
+                    data = JSON.parse(data);
+                    var maxconf = new Buffer(data.maxconfcount,'base64');
+                    maxconf = maxconf.toString();
+                    res.render('index',{title: '朗泰会议系统',confs:users.Rconf, username:req.session.user.username,ctime: dtime,contacts:inum,maxconf: maxconf*1});
+                });
+//                var config = require('../config.js');
+//                var maxconf = new Buffer(config.maxconfcount,'base64');
+//                maxconf = maxconf.toString();
+//                res.render('index',{title: '朗泰会议系统',confs:users.Rconf, username:req.session.user.username,ctime: dtime,contacts:inum,maxconf: maxconf*1});
             });
             //res.render('index',{title: '朗泰会议系统',confs:users.Rconf, username:req.session.user.username,ctime: dtime});
         });
@@ -65,13 +72,22 @@ module.exports = function(app) {
         fs.exists('/usr/src/Liveneo_conf.xml',function(exists){
             if(exists){
                 User.find({}, 'username Contact_info email', function(err,pdocs) {
-                    var config = require('../config.js');
-                    console.log(config.maxmemcount,config.maxconfcount);
-                    var mems = new Buffer(config.maxmemcount,'base64');
-                    mems = mems.toString();
-                    var confs = new Buffer(config.maxconfcount,'base64');
-                    confs = confs.toString();
-                    res.render('padmin', {title: '管理员界面', curnum: pdocs.length-1, maxmem: mems*1, maxconfs: confs*1});
+                    fs.readFile(__dirname+'/../config.js','utf-8',function(err,data){
+                        if(err) throw err;
+                        data = JSON.parse(data);
+                        var mems = new Buffer(data.maxmemcount,'base64');
+                        mems = mems.toString();
+                        var confs = new Buffer(data.maxconfcount,'base64');
+                        confs = confs.toString();
+                        res.render('padmin', {title: '管理员界面', curnum: pdocs.length-1, maxmem: mems*1, maxconfs: confs*1});
+                    });
+                    //var config = require('../config.js');
+                    //console.log(config.maxmemcount,config.maxconfcount);
+                    //var mems = new Buffer(config.maxmemcount,'base64');
+                   // mems = mems.toString();
+                   // var confs = new Buffer(config.maxconfcount,'base64');
+                   // confs = confs.toString();
+                    //res.render('padmin', {title: '管理员界面', curnum: pdocs.length-1, maxmem: mems*1, maxconfs: confs*1});
                 });
             }else{
                 res.render('upload',{title : '授权导入'});
@@ -249,7 +265,8 @@ module.exports = function(app) {
                   //getcurrent count
                   User.find({},'username',function(err,pdocs){
                       if(err) throw err;
-                      var config = require('../config.js');
+                      var contents = fs.readFileSync(__dirname+'/../config.js','utf8');
+                      var config = JSON.prase(contents);
                       var mem = new Buffer(config.maxmemcount,'base64');
                       mem = mem.toString();
                       if(pdocs.length + count - 2 > mem*1){
@@ -361,6 +378,29 @@ module.exports = function(app) {
       });
   });
 
+  app.post('/importmoh',function(req,res){
+      req.files.icfile === undefined
+      console.log(req.files.ifile);
+      if(req.files.ifile === undefined ){
+          req.flash('error','文件不能为空');
+          return res.redirect('/');
+      }
+      var temp_path = req.files.ifile.path;
+      var target_path = '/tmp/sounds/hold_music/conf_hold.wav';
+      fs.rename(temp_path,target_path,function(err){
+          if(err) {
+              console.log(err);
+          }
+          fs.unlink(temp_path,function(){
+              if(err){
+                  console.log(err);
+              }
+              req.flash('success','音乐文件上传成功');
+              res.redirect('/');
+          });
+      });
+  });
+
   app.post('/importlic',function(req,res){
        var temp_path = req.files.ifile.path;
        var type = req.files.ifile.type;
@@ -373,54 +413,69 @@ module.exports = function(app) {
                 var fts = result.Liveneo.License[0].Features[0].Feature;
                 console.log(fts);
                 var tempsig = result.Liveneo.Signature[0];
-                var stime = new Date(fts[2].Value[0]);
-                var etime = new Date(fts[3].Value[0]);
-                if(etime.getTime() < Date.now()){
-                    req.flash('error','授权已过期请重新申请');
-                    return res.redirect('/');
-                }else{
-                    getmac.getMac(function(err,macaddress){
-                        if(err) throw err;
-                        if(md5(macaddress+stime.getTime()+etime.getTime()) == result.Liveneo.Signature[0]){
-                            var fstream = fs.createWriteStream('./config.js',{flag:'w'});
-                            var obj = {};
-                            var bvalue = fts[0].Value[0];
-                            console.log(bvalue);
-                            obj.maxmemcount = new Buffer(bvalue).toString('base64');
-                            bvalue = fts[1].Value[0];
-                            console.log(bvalue);
-                            obj.maxconfcount = new Buffer(bvalue).toString('base64');
-                            var confcountsetting = "sh "+shfile_path+'/confsetting.sh '+bvalue;
-                            console.log(confcountsetting);
-                            ishell.run(confcountsetting);
-                            var contents = "module.exports = "+JSON.stringify(obj);
-                            fstream.write(contents);
-                            var content = "nohup node "+shfile_path+"/Lic/licdaemon.js "+stime.getTime()+' '+etime.getTime()+' '+result.Liveneo.Signature[0]+' &';
-                            ishell.run(content);
-                            ishell.run("chkconfig --add licd");
+                var stime,etime;
+                if( fts[2] !== undefined && fts[3] !== undefined){
+                    stime = new Date(fts[2].Value[0]);
+                    etime = new Date(fts[3].Value[0]);
+                    if(isNaN(stime.getTime()) || isNaN(etime.getTime())){
+                        //invalid Date
+                        req.flash('error','授权文件时间不正确');
+                        return req.redirect('/');
+                    }
+                    if(etime.getTime() < Date.now()){
+                        req.flash('error','授权已过期请重新申请');
+                        return res.redirect('/');
+                    }else{
+                        getmac.getMac(function(err,macaddress){
+                            if(err) throw err;
+                            if(md5(macaddress+stime.getTime()+etime.getTime()) == result.Liveneo.Signature[0]){
+                                //var fstream = fs.createWriteStream('./config.js',{flag:'w+'});
+                                var filepath = __dirname+'/../config.js';
+                                console.log(filepath);
+                                var obj = {};
+                                var bvalue = fts[0].Value[0];
+                                console.log(bvalue);
+                                obj.maxmemcount = new Buffer(bvalue).toString('base64');
+                                bvalue = fts[1].Value[0];
+                                console.log(bvalue);
+                                obj.maxconfcount = new Buffer(bvalue).toString('base64');
+                                var confcountsetting = "sh "+shfile_path+'/confsetting.sh '+bvalue;
+                                console.log(confcountsetting);
+                                ishell.run(confcountsetting);
+                                var contents = "module.exports = "+JSON.stringify(obj);
 
-                            fs.openSync(target_path,'wx+',755);
-                            //remove file
-                            fs.rename(temp_path,target_path,function(err){
-                                if(err) {
-                                    console.log(err);
-                                }
-                                fs.unlink(temp_path,function(){
-                                    if(err){
-                                        console.log(err);
-                                    }
-                                    req.flash('success','导入成功');
-                                    res.redirect('/');
+                                var content = "nohup node "+shfile_path+"/Lic/licdaemon.js "+stime.getTime()+' '+etime.getTime()+' '+result.Liveneo.Signature[0]+' &';
+                                ishell.run(content);
+                                ishell.run("chkconfig --add licd");
+
+                                fs.openSync(target_path,'wx+',755);
+                                //remove file
+                                fs.writeFile(filepath,contents,function(err){
+                                    if(err) throw err;
+                                    console.log('saved');
+                                    fs.rename(temp_path,target_path,function(err){
+                                        if(err) {
+                                            console.log(err);
+                                        }
+                                        fs.unlink(temp_path,function(){
+                                            if(err){
+                                                console.log(err);
+                                            }
+                                            req.flash('success','导入成功');
+                                            res.redirect('/');
+                                        });
+                                    });
                                 });
-                            });
-                        }else{
-                            req.flash('error','文件验证错误请重新导入');
-                            return res.redirect('/');
-                        }
-                    });
+                            }else{
+                                req.flash('error','文件验证错误请重新导入');
+                                return res.redirect('/');
+                            }
+                        });
+                    }
+                }else{
+                    req.flash('error','文件验证错误请重新导入');
+                    return req.redirect('/');
                 }
-
-
             });
        });
   });
@@ -561,7 +616,7 @@ module.exports = function(app) {
               console.log(puser);
               if(puser.email){
                     var mailOptions = {
-                        from : "sysop <langtailcphengshengv@gmail.com>",
+                        from : "sysop <confsys@confs.com>",
                         to : puser.email,
                         subject : "取消预约会议 "+req.body.confid,
                         html : "<h3>"+req.body.owner+" 取消该会议。</h3>",
@@ -656,7 +711,7 @@ module.exports = function(app) {
               req.flash('error','密码错误!');
               return res.redirect('/');
           }
-          fs.exists('/tmp/Liveneo_conf.xml',function(exists){
+          fs.exists('/usr/src/Liveneo_conf.xml',function(exists){
             if(exists || req.body.username === 'admin'){
                 req.session.user = iuser;
                 req.flash('success','登录成功');
@@ -743,7 +798,8 @@ module.exports = function(app) {
   
   app.get('/rmeeting/:stime',checkLogin);
   app.get('/rmeeting/:stime',function(req,res){
-      var config = require('../config.js');
+      var contents = fs.readFileSync(__dirname+'/../config.js','utf8');
+      var config = JSON.parse(contents);
       var maxconf = new Buffer(config.maxconfcount,'base64');
       maxconf = maxconf.toString();
       console.log(maxconf*1,req.session.user.Rconf);
@@ -779,6 +835,10 @@ module.exports = function(app) {
   app.get('/wmeeting',checkLogin);
   app.get('/wmeeting',function(req,res){
     res.render('wmeeting',{title: '监控会议'});
+  });
+
+  app.get('/moh',function(req,res){
+      res.render('importmoh',{title:'设置音乐'});
   });
 
   app.get('/u/:user/importcontacts',checkLogin);
@@ -1073,7 +1133,7 @@ module.exports = function(app) {
 
   app.post('/rmeeting/:stime',checkLogin);
   app.post('/rmeeting/:stime',function(req,res){
-    if(!req.body.confid || !req.body.starttime || !req.body.endtime || !req.body.mpwd || !req.body.opwd){
+    if(!req.body.confid || !req.body.starttime || !req.body.duretime || !req.body.mpwd || !req.body.opwd){
         req.flash('error','不能为空');
         return res.redirect('/rmeeting/'+req.params.stime);
     }
@@ -1083,12 +1143,70 @@ module.exports = function(app) {
     }
     var autocall = (req.body.autocall == 'open') ? true : false;
     var s = req.body.starttime.replace('T',' ').replace('Z','');
-    var e = req.body.endtime.replace('T', ' ').replace('Z','');
-    var err = new Date(s);
-    if( err.getTime() < req.params.stime ){
+
+
+    var duretime = req.body.duretime;
+    console.log(duretime);
+
+    var endtime = new Date(s);
+    if( endtime.getTime() < req.params.stime ){
         req.flash('error','不能预定当前时间之前的会议');
         return res.redirect('/rmeeting/'+req.params.stime);
     }
+    //reformat the end time
+      var cs = [31,28,31,30,31,30,31,31,30,31,30,31];
+      var tempminutes = endtime.getMinutes() + duretime*1;
+      var iHour = Math.floor(tempminutes/60);
+      var remMins = tempminutes%60;
+
+      console.log(iHour,remMins);
+
+      var temphours = endtime.getHours() + iHour;
+      var idate = Math.floor(temphours/24);
+      var remHours = temphours%24;
+
+      console.log(idate,remHours);
+
+      var tempdates = endtime.getDate() + idate;
+      var iMonth,remDate;
+      if(endtime.getMonth() == 1 && (endtime.getYear()+1900)%4 == 0 ){
+          iMonth = Math.floor(tempdates/(cs[endtime.getMonth()]+1));
+          remDate = tempdates%(cs[endtime.getMonth()]+1);
+          //cs[err.getMonth()] = cs[err.getMonth()]+1;
+      }else{
+          iMonth = Math.floor(tempdates/cs[endtime.getMonth()]);
+          remDate = tempdates%cs[endtime.getMonth()];
+      }
+
+      console.log(tempdates,iMonth,remDate);
+
+      var tempmonth = endtime.getMonth() + iMonth;
+      var iyear = Math.floor(tempmonth/12);
+      var remmonth = tempmonth%12;
+
+      console.log(tempmonth,iyear,remmonth);
+
+      var tempyear = endtime.getYear()+iyear+1900;
+
+//      err.setYear(tempyear);
+//      err.setMonth(remmonth);
+//      err.setDate(remDate);
+//      err.setHours(remHours,remMins);
+      remmonth = remmonth+1;
+      if(remmonth<10) {
+          remmonth = '0'+remmonth;
+      }
+      if(remDate<10) { remDate = '0'+remDate; }
+      if(remMins<10) { remMins = '0'+remMins; }
+
+      var e = tempyear+'-'+remmonth+'-'+remDate+' '+remHours+':'+remMins;
+      console.log(e);
+
+
+
+
+
+
     var susers = [];
     if(req.body.memlists.forEach != undefined){
         susers = req.body.memlists;

@@ -30,8 +30,8 @@ pconf.methods.Sched = function Sched(){
     var confname = this.confname;
     var path = settings.dpath + this.creater;
     var month = this.starttime.getMonth()+1;
-    var s_mins = this.starttime.getMinutes()-2;
-    var e_mins = this.endtime.getMinutes()+2;
+    var s_mins = this.starttime.getMinutes()-1;
+    var e_mins = this.endtime.getMinutes()+1;
     var s_hour = this.starttime.getHours();
     var e_hour = this.endtime.getHours();
     if(s_mins < 0){
@@ -124,23 +124,23 @@ pconf.methods.Sched = function Sched(){
 };
 
 pconf.methods.Unsched = function Unsched() {
-    var confid = this.confid;
+//    var confid = this.confid;
     var path = settings.dpath + this.creater;
-    var month = this.starttime.getMonth()+1;
-    var s_mins = this.starttime.getMinutes()-2;
-    var e_mins = this.endtime.getMinutes()+2;
-    var s_hour = this.starttime.getHours();
-    var e_hour = this.endtime.getHours();
-    if(s_mins < 0){
-        s_mins = s_mins+60;
-        s_hour = s_hour-1;
-    }
-    if(e_mins > 59){
-        e_mins = e_mins - 60;
-        e_hour = e_hour + 1;
-    }
-    var s_date = this.starttime.getDate();
-    var e_date = this.endtime.getDate();
+//    var month = this.starttime.getMonth()+1;
+//    var s_mins = this.starttime.getMinutes()-2;
+//    var e_mins = this.endtime.getMinutes()+2;
+//    var s_hour = this.starttime.getHours();
+//    var e_hour = this.endtime.getHours();
+//    if(s_mins < 0){
+//        s_mins = s_mins+60;
+//        s_hour = s_hour-1;
+//    }
+//    if(e_mins > 59){
+//        e_mins = e_mins - 60;
+//        e_hour = e_hour + 1;
+//    }
+//    var s_date = this.starttime.getDate();
+//    var e_date = this.endtime.getDate();
     var autocall = this.autocall;
     var fullpath;
     if(autocall){
@@ -160,7 +160,6 @@ pconf.methods.Unsched = function Unsched() {
         var command = "rm -f "+fullpath+"*"+addfile+".sh";
         console.log(command);
         ishell.run(command);
-
     }
 };
 var Conf = mongoose.model('confs',pconf);

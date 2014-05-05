@@ -28,6 +28,8 @@
                 <% } else { %>
                 <ul class="nav navbar-nav navbar-right">
                     <% if( locals.user.username === 'admin' ) { %>
+                    <li><a href="/">系统管理员</a></li>
+                    <li><a href="/moh">设置音乐</a></li>
                     <li><a href="/gcontacts">全局通讯录</a></li>
                     <% }else { %>
                     <li><a href="/u/<%= locals.user.username %>/edit"><%= locals.user.username %></a></li>

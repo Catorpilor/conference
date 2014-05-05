@@ -33,7 +33,10 @@
                     <% var month = t.getMonth() + 1; %>
                     <% var date = t.getDate(); %>
                     <% if( date < 10 ) { %>
-			<% date = '0'+date; %>
+			            <% date = '0'+date; %>
+                    <% } %>
+                    <% if( month < 10 ) { %>
+                     <% month = '0'+month; %>
                     <% } %>
                     <% var content = t.getFullYear() +'-'+month+'-'+date+'T'+t.getHours()+':'; %>
                     <% if( t.getMinutes() < 10 ) { %>
@@ -50,8 +53,10 @@
         <div class="form-group">
 			<div class="col-md-5">
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-				    <input type="datetime-local"  class="form-control" id="endtime" name="endtime" placeholder="结束时间.(年-月-日 时:分)" value="<%= content %>">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                    <input type="text" class="form-control" id="duretime" name="duretime" placeholder="会议持续时间">
+				    <!--<input type="datetime-local"  class="form-control" id="endtime" name="endtime" placeholder="结束时间.(年-月-日 时:分)" value="<%= content %>">-->
+                    <span class="input-group-addon">分钟</span>
                 </div>
                 <span class="help-block" id="ewarning"></span>
 			</div>
@@ -139,21 +144,21 @@
                 endTimer();
             }
         });
-        $('#endtime').bind('focus',function(e){
-            if(!isTargetwindow){
-                startTimer('end');
-            }
-        });
-        $('#endtime').bind('blur',function(e){
-            if(!isTargetwindow){
-                endTimer();
-            }
-        });
+//        $('#endtime').bind('focus',function(e){
+//            if(!isTargetwindow){
+//                startTimer('end');
+//            }
+//        });
+//        $('#endtime').bind('blur',function(e){
+//            if(!isTargetwindow){
+//                endTimer();
+//            }
+//        });
         var timer;
         var $stime = $('#starttime'),
             $swarn = $('#swarning'),
-            $ewarn = $('#ewarning'),
-            $etime = $('#endtime'),
+//            $ewarn = $('#ewarning'),
+//            $etime = $('#endtime'),
             checkInputChange=function() {
                 var itemp = $stime.val();
                 if(curtime !== itemp ){
@@ -166,30 +171,28 @@
                     }
                 }
             },
-            checkEndChange=function() {
-                var itemp = $stime.val();
-                if(itemp > $etime.val() ){
-                    //end time is earlier than the start time
-                    $ewarn.html('结束时间不能早于开始时间');
-                }else{
-                    //to check duration of the conference
-                    itemp = itemp.replace('T',' ').replace('Z','');
-                    var iend = $etime.val().replace('T',' ').replace('Z','');
-                    var sstime = new Date(itemp),
-                        eetime = new Date(iend);
-                    if(sstime.getTime()+300000 > eetime.getTime() ){
-                        //less than 5 mins
-                        $ewarn.html('会议时间少于5分钟');
-                    }else{
-                        $ewarn.html('');
-                    }
-                }
-            },
+//            checkEndChange=function() {
+//                var itemp = $stime.val();
+//                if(itemp > $etime.val() ){
+//                    //end time is earlier than the start time
+//                    $ewarn.html('结束时间不能早于开始时间');
+//                }else{
+//                    //to check duration of the conference
+//                    itemp = itemp.replace('T',' ').replace('Z','');
+//                    var iend = $etime.val().replace('T',' ').replace('Z','');
+//                    var sstime = new Date(itemp),
+//                        eetime = new Date(iend);
+//                    if(sstime.getTime()+300000 > eetime.getTime() ){
+//                        //less than 5 mins
+//                        $ewarn.html('会议时间少于5分钟');
+//                    }else{
+//                        $ewarn.html('');
+//                    }
+//                }
+//            },
             startTimer = function(type) {
                 if(type === 'start'){
                     timer = setInterval(checkInputChange,1500);
-                }else{
-                    timer = setInterval(checkEndChange,1500);
                 }
             },
             endTimer = function() {

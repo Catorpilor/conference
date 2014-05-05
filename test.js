@@ -1,6 +1,7 @@
 
 var getmac = require('getmac');
 var crypto = require('crypto');
+var fs = require('fs');
 
 //var md5 = crypto.createHash('md5');
 //console.log(md5);
@@ -20,12 +21,80 @@ function md5(str){
     return str;
 };
 
-var a = new Date('2014-04-30 00:00:00');
-var b = new Date('2014-04-30 17:40:00');
+var a = new Date('2014-05-04 00:00:00');
+var b = new Date('2014-06-01 20:40:00');
 console.log(a.getTime(), b.getTime());
 
 console.log(md5('00:0C:29:B4:C5:72'+ a.getTime()+ b.getTime()));
+
+var obj = {
+    username:'jimmy',
+    pass:'fdsafdf'
+};
+
+//fs.writeFile('./config1.js',JSON.stringify(obj),{flag:'w+'},function(err){
+//    if(err) throw err;
+////    var newd = JSON.parse(data);
+////    console.log(newd.username);
+//    console.log('saved');
+//});
+var cons = fs.readFileSync('./config1.js','utf8');
+
+console.log(JSON.parse(cons));
+
+var err = new Date('2012-12-31 22:22:22');
+
+var e = 133;
+console.log(err);
+//reformat the end time
+var cs = [31,28,31,30,31,30,31,31,30,31,30,31];
+var tempminutes = err.getMinutes() + e;
+var iHour = Math.floor(tempminutes/60);
+var remMins = tempminutes%60;
+
+console.log(iHour,remMins);
+
+var temphours = err.getHours() + iHour;
+var idate = Math.floor(temphours/24);
+var remHours = temphours%24;
+
+console.log(idate,remHours);
+
+var tempdates = err.getDate() + idate;
+var iMonth,remDate;
+if(err.getMonth() == 1 && (err.getYear()+1900)%4 == 0 ){
+    iMonth = Math.floor(tempdates/(cs[err.getMonth()]+1));
+    remDate = tempdates%(cs[err.getMonth()]+1);
+    //cs[err.getMonth()] = cs[err.getMonth()]+1;
+}else{
+    iMonth = Math.floor(tempdates/cs[err.getMonth()]);
+    remDate = tempdates%cs[err.getMonth()];
+}
+
+console.log(tempdates,iMonth,remDate);
+
+var tempmonth = err.getMonth() + iMonth;
+var iyear = Math.floor(tempmonth/12);
+var remmonth = tempmonth%12;
+
+console.log(tempmonth,iyear,remmonth);
+
+var tempyear = err.getYear()+iyear+1900;
+
+err.setYear(tempyear);
+err.setMonth(remmonth);
+err.setDate(remDate);
+err.setHours(remHours,remMins);
+
+console.log(err);
 /*
+ 00:0C:29:B4:C5:72
+ client:00:0C:29:CA:D6:EF
+ 00:0C:29:BB:97:6E
+ 00:0C:29:9D:D6:53
+ 00:0C:29:21:70:CF
+ 00:0C:29:4D:E6:9B
+ 00:0C:29:D1:09:2D
 var fs = require('fs');
 var contents = "module.exports =";
 var obj = {

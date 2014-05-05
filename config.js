@@ -1,1 +1,1 @@
-module.exports = {"maxmemcount":"MzA=","maxconfcount":"Mw=="}
+{"username":"jimmy","pass":"fdsafdf"}

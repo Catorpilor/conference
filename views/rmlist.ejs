@@ -27,9 +27,7 @@
                     <hr/>
                     <p>
                         <a class="btn btn-primary" role="button" href="/wmeeting/<%= confs.conf_id %>/<%= confs.start_time.getTime() %>">监控</a>
-                        <% if( ctime + 1800000 < confs.start_time.getTime() ) { %>
-                            <a role="button" class="btn btn-danger" href="/" id="delete_conf" conf="<%= confs.conf_id %>" owner="<%= username %>" stime="<%= confs.start_time.getTime() %>">删除</a>
-                        <% } %>
+                        <a role="button" class="btn btn-danger" href="/" id="delete_conf" conf="<%= confs.conf_id %>" owner="<%= username %>" stime="<%= confs.start_time.getTime() %>">取消</a>
                     </p>
                 </div>
             </div>
@@ -47,7 +45,7 @@
             data.owner = $(this).attr('owner');
             data.stime = $(this).attr('stime')*1;
             console.log(data);
-            if(confirm("确定删除?")){
+            if(confirm("确定取消?")){
                 console.log(1);
                 $.ajax({
                     type: 'POST',

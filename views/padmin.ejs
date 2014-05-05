@@ -158,23 +158,27 @@
             var cemail = $('#contact_email').val();
             var clocate = $('#contact_locate').val();
             console.log(cname,cmobile,coffice,cemail);
-            $modal.modal('hide');
-            var data={};
-            data.name = cname;
-            data.mobile = cmobile;
-            data.office = coffice;
-            data.email = cemail;
-            data.locate = clocate;
-            $.ajax({
-                type: 'POST',
-                data: JSON.stringify(data),
-                contentType: 'application/json',
-                url : '/addcontact/',
-                success : function(data){
-                    console.log(data);
-                    window.location.href="/";
-                }
-            });
+            if(cname === '' && cemail==='' && clocate === ''){
+                alert("标记*的内容不能为空");
+            }else{
+                $modal.modal('hide');
+                var data={};
+                data.name = cname;
+                data.mobile = cmobile;
+                data.office = coffice;
+                data.email = cemail;
+                data.locate = clocate;
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url : '/addcontact/',
+                    success : function(data){
+                        console.log(data);
+                        window.location.href="/";
+                    }
+                });
+            }
         });
         if( $('.cur_nums').html() != 0 ){
             var data={};

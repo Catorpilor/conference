@@ -49,6 +49,10 @@ app.configure(function(){
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.static(path.join(__dirname, 'static')));
  });
+
+process.on('uncaughtException',function(err){
+    console.log(err.statck);
+});
 /*
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
