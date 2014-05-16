@@ -49,9 +49,11 @@ app.post('/config',function(req,res){
         obj.inBoundCall = req.body.icall;
         obj.OutBoundCall = req.body.ocall;
         obj.inBoundCall_prefix = 'bgapi originate {origination_caller_id_name=Conference,origination_caller_id_number='+req.body.ocallnumber+',ignore_early_media=true}'+req.body.icall;
-        obj.OutBoundCall_prefix = 'bgapi originate {origination_caller_id_name=Conference,origination_caller_id_number='+req.body.ocallnumber+',ignore_early_media=true}'+req.body.ocall;
-        obj.OutBoundCall_N_prefix = 'bgapi originate {origination_caller_id_name=Conference,origination_caller_id_number='+req.body.ocallnumber+',ignore_early_media=true}'+req.body.ocall+req.body.obprefix;
+        obj.OutBoundCall_prefix = 'bgapi originate {origination_caller_id_name=Conference,origination_caller_id_number='+req.body.ocallnumber+',ignore_early_media=true}'+req.body.obound;
+        obj.OutBoundCall_N_prefix = 'bgapi originate {origination_caller_id_name=Conference,origination_caller_id_number='+req.body.ocallnumber+',ignore_early_media=true}'+req.body.obound+req.body.obprefix+req.body.obNprefix;
         obj.dpath='/tmp/lconf/';
+        obj.callinNum = req.body.confdid;
+        obj.email = req.body.muser;
         obj.fsdomain = '@'+req.body.fs;
         obj.domain = req.body.fs;
         obj.scripts = '&javascript(fs_conf_ivr_withconfid.js ';

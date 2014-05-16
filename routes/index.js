@@ -439,7 +439,7 @@ module.exports = function(app) {
                                 bvalue = fts[1].Value[0];
                                 console.log(bvalue);
                                 obj.maxconfcount = new Buffer(bvalue).toString('base64');
-                                var confcountsetting = "sh "+shfile_path+'/confsetting.sh '+bvalue;
+                                var confcountsetting = "sh "+shfile_path+'/confsetting.sh '+fts[0].Value[0];
                                 console.log(confcountsetting);
                                 ishell.run(confcountsetting);
                                 var contents = "module.exports = "+JSON.stringify(obj);
