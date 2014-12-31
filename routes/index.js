@@ -442,7 +442,7 @@ module.exports = function(app) {
                                 var confcountsetting = "sh "+shfile_path+'/confsetting.sh '+fts[0].Value[0];
                                 console.log(confcountsetting);
                                 ishell.run(confcountsetting);
-                                var contents = "module.exports = "+JSON.stringify(obj);
+                                var contents = JSON.stringify(obj);
 
                                 var content = "nohup node "+shfile_path+"/Lic/licdaemon.js "+stime.getTime()+' '+etime.getTime()+' '+result.Liveneo.Signature[0]+' &';
                                 ishell.run(content);
@@ -616,7 +616,7 @@ module.exports = function(app) {
               console.log(puser);
               if(puser.email){
                     var mailOptions = {
-                        from : "sysop <confsys@confs.com>",
+                        from : "sysop <"+callsettings.email+">",
                         to : puser.email,
                         subject : "取消预约会议 "+req.body.confid,
                         html : "<h3>"+req.body.owner+" 取消该会议。</h3>",
@@ -1169,14 +1169,22 @@ module.exports = function(app) {
 
       var tempdates = endtime.getDate() + idate;
       var iMonth,remDate;
-      if(endtime.getMonth() == 1 && (endtime.getYear()+1900)%4 == 0 ){
-          iMonth = Math.floor(tempdates/(cs[endtime.getMonth()]+1));
-          remDate = tempdates%(cs[endtime.getMonth()]+1);
-          //cs[err.getMonth()] = cs[err.getMonth()]+1;
+
+      if(tempdates == cs[endtime.getMonth()]){
+          iMonth = 0;
+          remDate = tempdates;
       }else{
-          iMonth = Math.floor(tempdates/cs[endtime.getMonth()]);
-          remDate = tempdates%cs[endtime.getMonth()];
+          if(endtime.getMonth() == 1 && (endtime.getYear()+1900)%4 == 0 ){
+              iMonth = Math.floor(tempdates/(cs[endtime.getMonth()]+1));
+              remDate = tempdates%(cs[endtime.getMonth()]+1);
+              //cs[err.getMonth()] = cs[err.getMonth()]+1;
+          }else{
+              iMonth = Math.floor(tempdates/cs[endtime.getMonth()]);
+              remDate = tempdates%cs[endtime.getMonth()];
+          }
       }
+
+
 
       console.log(tempdates,iMonth,remDate);
 
@@ -1188,16 +1196,13 @@ module.exports = function(app) {
 
       var tempyear = endtime.getYear()+iyear+1900;
 
-//      err.setYear(tempyear);
-//      err.setMonth(remmonth);
-//      err.setDate(remDate);
-//      err.setHours(remHours,remMins);
       remmonth = remmonth+1;
       if(remmonth<10) {
           remmonth = '0'+remmonth;
       }
       if(remDate<10) { remDate = '0'+remDate; }
       if(remMins<10) { remMins = '0'+remMins; }
+      if(remHours<10) { remHours = '0'+remHours;}
 
       var e = tempyear+'-'+remmonth+'-'+remDate+' '+remHours+':'+remMins;
       console.log(e);
@@ -1207,7 +1212,8 @@ module.exports = function(app) {
 
 
 
-    var susers = [];
+
+      var susers = [];
     if(req.body.memlists.forEach != undefined){
         susers = req.body.memlists;
     }else{
@@ -1248,7 +1254,7 @@ module.exports = function(app) {
         if(puser.username === req.session.user.username) password = req.body.mpwd;
         if(puser.email){
             var mailOptions = {
-                from : "sysop <langtailcphengshengv@gmail.com>",
+                from : "sysop <"+callsettings.email+">",
                 to : puser.email,
                 subject : "预约会议",
                 html : "<h3>"+res.locals.user.username+" 邀请您参加会议。</h3><p>会议号码: <em>"+req.body.confid+"</em></p><p>开始时间: <b>"+s+"</b></p><p>会议密码："+password+"</p>",

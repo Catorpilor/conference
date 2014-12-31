@@ -1,4 +1,4 @@
-<form class="form-horizontal" method="post" onsubmit="return confirm('确认预约该会议?')">
+<form class="form-horizontal" method="post" onsubmit="return validate_form(this);">
 	<fieldset>
 		<legend>预约会议</legend>
         <div class="form-group">
@@ -28,6 +28,51 @@
         <div class="form-group">
 			<div class="col-md-5">
                 <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+				    <input type="password" class="form-control" id="mpwd" name="mpwd" placeholder="管理员密码">
+                </div>
+			</div>
+		</div>
+        <div class="form-group">
+			<div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+				    <input type="password" class="form-control" id="opwd" name="opwd" placeholder="会议密码">
+                </div>
+			</div>
+		</div>
+        <div class="form-group">
+			<div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                    <input type="text" class="form-control" id="duretime" name="duretime" placeholder="会议持续时间">
+                    <span class="input-group-addon">分钟</span>
+                </div>
+			</div>
+	</div>
+        <div class="form-group">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <% include contacts %>
+                </div>
+                <input type="checkbox" class="checkbox-inline" id="gselect"> 添加全局联系人
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-volume-up"></i></span>
+                    <select class="form-control" name="autocall">
+                        <option value="open">自动外呼:开启</option>
+                        <option value="close">自动外呼:关闭</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+			<div class="col-md-5">
+                <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                     <% var t = new Date(); %>
                     <% var month = t.getMonth() + 1; %>
@@ -50,58 +95,39 @@
                 <span class="help-block" id="swarning"></span>
 			</div>
         </div>
-        <div class="form-group">
-			<div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                    <input type="text" class="form-control" id="duretime" name="duretime" placeholder="会议持续时间">
-				    <!--<input type="datetime-local"  class="form-control" id="endtime" name="endtime" placeholder="结束时间.(年-月-日 时:分)" value="<%= content %>">-->
-                    <span class="input-group-addon">分钟</span>
-                </div>
-                <span class="help-block" id="ewarning"></span>
-			</div>
-		</div>
-        <div class="form-group">
-			<div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-				    <input type="password" class="form-control" id="mpwd" name="mpwd" placeholder="管理员密码">
-                </div>
-			</div>
-		</div>
-        <div class="form-group">
-			<div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-				    <input type="password" class="form-control" id="opwd" name="opwd" placeholder="会议密码">
-                </div>
-			</div>
-		</div>
-        <div class="form-group">
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                    <% include contacts %>
-                </div>
-                <input type="checkbox" class="checkbox-inline" id="gselect"> 添加全局联系人
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-volume-up"></i></span>
-                    <select class="form-control" name="autocall">
-                        <option value="open">自动外呼:开启</option>
-                        <option value="close">自动外呼:关闭</option>
-                    </select>
-                </div>
-            </div>
-        </div>
         <hr>
 		<button type="submit" class="btn btn-primary" id="commit">提交</button>
 	</fieldset>
 </form>
 <script src="/javascripts/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+function validate_inputs(field,alerttxt)
+{
+with (field)
+{
+if(value.length == 0||value*1==0){
+alert(alerttxt)
+return false
+}
+}
+}
+
+function validate_form(thisform)
+{
+with (thisform)
+{
+if (validate_inputs(mpwd,"管理员密码不能为空!")==false)
+  {mpwd.focus();return false}
+if (validate_inputs(opwd,"与会者密码不能为空!")==false)
+  {opwd.focus();return false}
+if (validate_inputs(duretime,"会议时长不能为零或空!")==false)
+  {duretime.focus();return false}
+if (validate_inputs(memlists,"与会者不能为空!")==false)
+  {memlists.focus();return false}
+}
+
+}
+</script>
 <script src="/javascripts/multi-select.js"></script>
 <script>
     $(document).ready(function(){
