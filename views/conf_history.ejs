@@ -25,8 +25,8 @@
                         <span class="add-on label label-success" style="color:#0f0f0f;text-align:center;background-color:#A3c406"><%= confs.paticpants.length %> 人</span>
                         &nbsp;&nbsp;
                         <% if( confs.c_status ) { %>
-                        <% var filename = confs.record_path.substring(confs.record_path.lastIndexOf('/')+1); %>
-                            <a href="/downloadrecording/<%= filename %>" ipath="<%= confs.record_path %>" id="drecord" >下载录音</a>
+                        <% var filename = confs.record_path.substr(12,18); %>
+                        <a href="/downloadrecording/<%= filename %>" ipath="<%= confs.record_path %>" id="drecord" >下载录音</a>
                         <% } %>
                     </h5>
                 </div>

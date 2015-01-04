@@ -115,6 +115,13 @@ io.sockets.on('connection',function(socket){
                                 console.log(attrs.flags[0].is_moderator[0]=='false');
                                 var type = (attrs.flags[0].is_moderator[0]=='true') ? 'moderator' : 'member';
                                 socket.emit(confid+'-add-member', {caller_ani:ani,mem_id:mid,mem_type:type});
+                            }else if(attrs.$.type === 'recording_node'){
+                                //conf's beening recorded
+                                var recordfile = attrs.record_path[0];
+                                //hard code the ctime
+                                ///tmp/record/1420356462992_8055.wav
+                                var ctime = recordfile.substr(12,13); //1420356462992
+                                socket.emit(confid+'-status',{ctime:ctime});
                             }
                         });
                     });
@@ -171,13 +178,13 @@ io.sockets.on('connection',function(socket){
     });
     socket.on('precord',function(data){
         console.log('pause recording');
-        var command = "api bgapi conference "+data.conf_id+" recording pause /tmp/record/"+data.ifile;
+        var command = "api bgapi conference "+data.conf_id+" recording pause "+data.ifile;
         console.log(command);
         freeswitch.sendCommand(command);
     });
     socket.on('rrecord',function(data){
         console.log('resume recording');
-        var command = "api bgapi conference "+data.conf_id+" recording resume /tmp/record/"+data.ifile;
+        var command = "api bgapi conference "+data.conf_id+" recording resume "+data.ifile;
         console.log(command);
         freeswitch.sendCommand(command);
     });

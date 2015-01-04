@@ -21,11 +21,12 @@ function md5(str){
     return str;
 };
 
-var a = new Date('2014-05-04 00:00:00');
-var b = new Date('2014-06-01 20:40:00');
+var a = new Date('2014-12-31 00:00:00');
+var b = new Date('2015-02-13 20:40:00');
 console.log(a.getTime(), b.getTime());
 
-console.log(md5('00:0C:29:B4:C5:72'+ a.getTime()+ b.getTime()));
+//console.log(md5('00:0C:29:F7:45:DB'+ a.getTime()+ b.getTime()));
+console.log(md5('00:E0:4C:FC:29:6B'+ a.getTime()+ b.getTime()));
 
 var obj = {
     username:'jimmy',
@@ -89,12 +90,14 @@ err.setHours(remHours,remMins);
 console.log(err);
 /*
  00:0C:29:B4:C5:72
- client:00:0C:29:CA:D6:EF
+ client:00:0C:29:F1:00:DC
+
  00:0C:29:BB:97:6E
  00:0C:29:9D:D6:53
  00:0C:29:21:70:CF
  00:0C:29:4D:E6:9B
  00:0C:29:D1:09:2D
+ 00:0C:29:78:F0:D7
 var fs = require('fs');
 var contents = "module.exports =";
 var obj = {
