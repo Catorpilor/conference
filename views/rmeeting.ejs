@@ -7,6 +7,7 @@
                     <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
                     <input type="text" class="form-control" id="confname" name="confname" placeholder="会议室名称">
                 </div>
+                <input type="checkbox" class="checkbox-inline" id="gChecked" value="false" name="bConf"> 永久会议室
             </div>
         </div>
         <div class="form-group">
@@ -41,13 +42,14 @@
                 </div>
 			</div>
 		</div>
-        <div class="form-group">
+        <div class="form-group dtimes">
 			<div class="col-md-5">
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
                     <input type="text" class="form-control" id="duretime" name="duretime" placeholder="会议持续时间">
                     <span class="input-group-addon">分钟</span>
                 </div>
+
 			</div>
 	</div>
         <div class="form-group">
@@ -158,6 +160,16 @@ if (validate_inputs(memlists,"与会者不能为空!")==false)
             }else{
                 $('option').remove('.gc');
                 $('.multiselect').multiselect('rebuild');
+            }
+        });
+        $('#gChecked').click(function(){
+            if($(this).is(':checked')){
+                $('.dtimes').addClass('hide');
+                alert($('#gChecked').val());
+            }else{
+                $('.dtimes').removeClass('hide');
+                $('#gChecked').val =
+                alert($('#gChecked').val('true'));
             }
         });
         $('#starttime').bind('focus',function(e){

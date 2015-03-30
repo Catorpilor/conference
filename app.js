@@ -217,3 +217,8 @@ freeswitch.on('connect',function(){
     freeswitch.event('CUSTOM conference::maintenance');
     console.log('connected to freeswitch');
 });
+
+freeswitch.on('disconnect',function(){
+  console.log('Reconnect to freeswitch\n');
+  freeswitch.connect();
+})
